@@ -16,20 +16,35 @@ var TouchScroll = function () {
         isFirefox: window.navigator.userAgent.toLowerCase().indexOf('firefox') > -1,
         init: function (options) {
             var me = this;
+            
+            // find target element or fall back to body
             if (options && options.id) {
                 this.el = document.getElementById(options.id);
-            } else {
+            }
+            if (!this.el) {
                 if (this.isIE || this.isFirefox) {
                     this.el = document.documentElement;
                 } else {
                     this.el = document.body;
                 }
             }
-            this.addEvent('mousedown', this.el, function (e) { me.onMouseDown(e); });
-			this.addEvent('mousemove', this.el, function (e) { me.onMouseMove(e); });
-			this.addEvent('mouseup', this.el, function (e) { me.onMouseUp(e); });
+
+            // if draggable option is enabled add events
+            if (options.draggable === true) {
+                if (this.isIE) {
+                    document.ondragstart = function () { return false; };
+                }
+                if (this.isIE || this.isFirefox) {
+                    this.body = document.documentElement;
+                } else {
+                    this.body = document.body;
+                }
+                this.addEvent('mousedown', this.el, function (e) { me.onMouseDown(e); });
+                this.addEvent('mousemove', this.el, function (e) { me.onMouseMove(e); });
+                this.addEvent('mouseup', this.body, function (e) { me.onMouseUp(e); });
+            }
             
-            // if zoom param exists add mouse wheel functionality
+            // if zoom option exists add mouse wheel functionality to element
             if (options && options.zoom) {
                 this.elzoom = document.getElementById(options.zoom);
                 if (this.isFirefox) {
@@ -37,6 +52,22 @@ var TouchScroll = function () {
                 } else {
                     this.addEvent('mousewheel', this.el, function (e) { me.onMouseWheel(e); });
                 }
+            }
+            
+            // if scroll options exist add events
+            if (options && options.prev) {
+                this.prev = document.getElementById(options.prev);
+                this.addEvent('mousedown', this.prev, function (e) {
+                    me.diffx = options.distance ? (-options.distance / 20) : -20;
+                    me.onMouseUp(e);
+                });
+            }
+            if (options && options.next) {
+                this.next = document.getElementById(options.next);
+                this.addEvent('mousedown', this.next, function (e) {
+                    me.diffx = options.distance ? (options.distance / 20) : 20;
+                    me.onMouseUp(e);
+                });
             }
         },
         addEvent: function (name, el, func) {
@@ -72,12 +103,19 @@ var TouchScroll = function () {
         },
         onMouseUp: function (e) {
             if (!e) { e = window.event; }
+            if (e.target && e.target.nodeName === 'IMG') {
+                e.preventDefault();
+            } else if (e.srcElement && e.srcElement.nodeName === 'IMG') {
+                e.returnValue = false;
+            }
             this.drag = false;
             var me = this,
                 start = 1,
                 animate = function () {
                     var step = Math.sin(start);
                     if (step <= 0) {
+                        me.diffx = 0;
+                        me.diffy = 0;
                         window.cancelAnimationFrame(animate);
                     } else {
                         me.el.scrollLeft += me.diffx * step;
