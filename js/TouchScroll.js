@@ -12,10 +12,15 @@ var TouchScroll = function () {
         axis: 'x',
         drag: false,
         zoom: 1,
+        time: 0.04,
         isIE: window.navigator.userAgent.toLowerCase().indexOf('msie') > -1,
         isFirefox: window.navigator.userAgent.toLowerCase().indexOf('firefox') > -1,
+        /**
+         * @method init
+         */
         init: function (options) {
             var me = this;
+            this.options = options;
             
             // find target element or fall back to body
             if (options && options.id) {
@@ -58,18 +63,27 @@ var TouchScroll = function () {
             if (options && options.prev) {
                 this.prev = document.getElementById(options.prev);
                 this.addEvent('mousedown', this.prev, function (e) {
-                    me.diffx = options.distance ? (-options.distance / 20) : -20;
+                    me.onMouseDown(e);
+                });
+                this.addEvent('mouseup', this.prev, function (e) {
+                    me.diffx = options.distance ? (-options.distance / 11) : -11;
                     me.onMouseUp(e);
                 });
             }
             if (options && options.next) {
                 this.next = document.getElementById(options.next);
                 this.addEvent('mousedown', this.next, function (e) {
-                    me.diffx = options.distance ? (options.distance / 20) : 20;
+                    me.onMouseDown(e);
+                });
+                this.addEvent('mouseup', this.next, function (e) {
+                    me.diffx = options.distance ? (options.distance / 11) : 11;
                     me.onMouseUp(e);
                 });
             }
         },
+        /**
+         * @method addEvent
+         */
         addEvent: function (name, el, func) {
             if (el.addEventListener) {
                 el.addEventListener(name, func, false);
@@ -79,60 +93,75 @@ var TouchScroll = function () {
                 el[name] = func;
             }
         },
-        onMouseDown: function (e) {
+        /**
+         * @method cancelEvent
+         */
+        cancelEvent: function (e) {
             if (!e) { e = window.event; }
             if (e.target && e.target.nodeName === 'IMG') {
                 e.preventDefault();
             } else if (e.srcElement && e.srcElement.nodeName === 'IMG') {
                 e.returnValue = false;
             }
-            this.startx = e.clientX + this.el.scrollLeft;
-            this.starty = e.clientY + this.el.scrollTop;
-            this.diffx = 0;
-            this.diffy = 0;
-            this.drag = true;
         },
+        /**
+         * @method onMouseDown
+         */
+        onMouseDown: function (e) {
+            if (this.drag === false || this.options.wait === false) {
+                this.drag = true;
+                this.cancelEvent(e);
+                this.startx = e.clientX + this.el.scrollLeft;
+                this.starty = e.clientY + this.el.scrollTop;
+                this.diffx = 0;
+                this.diffy = 0;
+            }
+        },
+        /**
+         * @method onMouseMove
+         */
         onMouseMove: function (e) {
             if (this.drag === true) {
-                if (!e) { e = window.event; }
+                this.cancelEvent(e);
                 this.diffx = (this.startx - (e.clientX + this.el.scrollLeft));
                 this.diffy = (this.starty - (e.clientY + this.el.scrollTop));
                 this.el.scrollLeft += this.diffx;
                 this.el.scrollTop += this.diffy;
             }
         },
+        /**
+         * @method onMouseMove
+         */
         onMouseUp: function (e) {
-            if (!e) { e = window.event; }
-            if (e.target && e.target.nodeName === 'IMG') {
-                e.preventDefault();
-            } else if (e.srcElement && e.srcElement.nodeName === 'IMG') {
-                e.returnValue = false;
+            if (this.drag === true) {
+                if (!this.options.wait) {
+                    this.drag = null;
+                }
+                this.cancelEvent(e);
+                var me = this,
+                    start = 1,
+                    animate = function () {
+                        var step = Math.sin(start);
+                        if (step <= 0) {
+                            me.diffx = 0;
+                            me.diffy = 0;
+                            window.cancelAnimationFrame(animate);
+                            me.drag = false;
+                        } else {
+                            me.el.scrollLeft += me.diffx * step;
+                            me.el.scrollTop += me.diffy * step;
+                            start -= me.time;
+                            window.requestAnimationFrame(animate);
+                        }
+                    };
+                animate();
             }
-            this.drag = false;
-            var me = this,
-                start = 1,
-                animate = function () {
-                    var step = Math.sin(start);
-                    if (step <= 0) {
-                        me.diffx = 0;
-                        me.diffy = 0;
-                        window.cancelAnimationFrame(animate);
-                    } else {
-                        me.el.scrollLeft += me.diffx * step;
-                        me.el.scrollTop += me.diffy * step;
-                        start -= 0.02;
-                        window.requestAnimationFrame(animate);
-                    }
-                };
-            animate();
         },
+        /**
+         * @method onMouseMove
+         */
         onMouseWheel: function (e) {
-            if (!e) { e = window.event; }
-            if (e.preventDefault) {
-                e.preventDefault();
-            } else {
-                e.returnValue = false;
-            }
+            this.cancelEvent(e);
             if (e.detail) {
                 this.zoom -= e.detail;
             } else {

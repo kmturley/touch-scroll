@@ -5,48 +5,90 @@
     <title>TouchScroll</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-        .viewer {
-            width: 640px;
-            height: 320px;
-            overflow: auto;
-        }
-        
-        .no-select {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            cursor: move;
-            cursor: -moz-grab;
-            cursor: -webkit-grab;
-        }
-
-        .no-select:active {
-            cursor: move;
-            cursor: -moz-grabbing;
-            cursor: -webkit-grabbing;
-        }
-    </style>
+    <link rel="stylesheet" href="css/carousel.css" />
+    <link rel="stylesheet" href="css/viewer.css" />
 </head>
 <body>
     <a href="https://github.com/kmturley/touch-scroll" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
     
     <h1>Touch Scroll</h1>
-    <div id="content" class="viewer no-select">
+    <p>Drag a native browser scroll area around! Works on Chrome (latest), Safari (latest), Firefox (latest), IE8+</p>
+    <h2>Viewer</h2>
+    <div class="viewer no-select" id="viewer">
         <img src="img/photo.jpg" alt="" draggable="false" id="photo" />
+    </div>
+    <h2>Carousel</h2>
+    <div class="carousel">
+        <a href="#/carousel/previous/" class="prev" id="prev">&#x25C0;</a>
+        <ul id="carousel">
+            <li>
+                <a href="#">
+                    <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 1</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 2</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 3</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 4</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 5</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 6</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 7</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 8</span>
+                </a>
+            </li>
+        </ul>
+        <a href="#/carousel/next/" class="next" id="next">&#x25B6;</a>
     </div>
 
     <script src="js/RequestAnimationFrame.js"></script>
     <script src="js/TouchScroll.js"></script>
     <script>
-        var touch = new TouchScroll();
-        touch.init({
-            id: 'content',
+        var viewer = new TouchScroll();
+        viewer.init({
+            id: 'viewer',
             draggable: true,
-            zoom: 'photo'
+            wait: false
+        });
+        
+        var carousel = new TouchScroll();
+        carousel.init({
+            id: 'carousel',
+            prev: 'prev',
+            next: 'next',
+            distance: 200
         });
     </script>
 </body>
