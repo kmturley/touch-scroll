@@ -109,7 +109,8 @@ var TouchScroll = function () {
          */
         onMouseDown: function (e) {
             if (this.drag === false || this.options.wait === false) {
-                this.drag = true;
+                // ignore mousedown event if emitted on scrollbar
+                this.drag = e.offsetX <= e.target.clientWidth && e.offsetY <= e.target.clientHeight;
                 this.cancelEvent(e);
                 this.startx = e.clientX + this.el.scrollLeft;
                 this.starty = e.clientY + this.el.scrollTop;
