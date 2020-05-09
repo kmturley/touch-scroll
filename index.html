@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="css/carousel.css" />
     <link rel="stylesheet" href="css/viewer.css" />
+    <link rel="stylesheet" href="css/timer.css" />
+    <link rel="stylesheet" href="css/carouselDnD.css" />
 </head>
 <body>
     <a href="https://github.com/kmturley/touch-scroll" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
@@ -72,9 +74,51 @@
         </ul>
         <a href="#/carousel/next/" class="next" id="next">&#x25B6;</a>
     </div>
+    <h2>Carousel with Drag and Drop</h2>
+    <p>Hold and drag to the left or right to scroll</p>
+    <p>Hold an image for a sec. to enable drag and drop. Hold it again to deactivate dnd</p>
+    <div class="carousel carouselDnD">
+        <a href="#/carousel/previous/" class="prev" id="prev">&#x25C0;</a>
+        <ul id="carousel-draggable">
+            <li>
+                <img src="img/photo-small.jpg" alt="" />
+                <span>Item 1</span>
+            </li>
+            <li>
+                <img src="img/photo-small.jpg" alt="" />
+                <span>Item 2</span>
+            </li>
+            <li>
+                <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 3</span>
+            </li>
+            <li>
+                <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 4</span>
+            </li>
+            <li>
+                <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 5</span>
+            </li>
+            <li>
+                <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 6</span>
+            </li>
+            <li>
+                <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 7</span>
+            </li>
+            <li>
+                <img src="img/photo-small.jpg" alt="" />
+                    <span>Item 8</span>
+            </li>
+        </ul>
+        <a href="#/carousel/next/" class="next" id="next">&#x25B6;</a>
+    </div>
 
     <script src="js/RequestAnimationFrame.js"></script>
     <script src="js/TouchScroll.js"></script>
+    <script src="js/dragDrop.js"></script>
     <script>
         var viewer = new TouchScroll();
         viewer.init({
@@ -89,6 +133,16 @@
             prev: 'prev',
             next: 'next',
             distance: 200
+        });
+
+        var carousel = new TouchScroll();
+        carousel.init({
+            id: 'carousel-draggable',
+            prev: 'prev',
+            next: 'next',
+            distance: 200,
+            draggable: true,
+            ignoreDraggableElements: true
         });
     </script>
 </body>
