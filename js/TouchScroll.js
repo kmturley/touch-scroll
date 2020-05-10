@@ -13,6 +13,7 @@ var TouchScroll = function () {
         drag: false,
         zoom: 1,
         time: 0.04,
+        ignoreDraggableElements: false,
         isIE: window.navigator.userAgent.toLowerCase().indexOf('msie') > -1,
         isFirefox: window.navigator.userAgent.toLowerCase().indexOf('firefox') > -1,
         /**
@@ -33,6 +34,11 @@ var TouchScroll = function () {
                     this.el = document.body;
                 }
             }
+
+            // ignore scrolling for draggbles e.g. when img dragable
+            if (options && options.ignoreDraggableElements) {
+                this.ignoreDraggableElements = true;
+              }
 
             // if draggable option is enabled add events
             if (options.draggable === true) {
@@ -108,6 +114,10 @@ var TouchScroll = function () {
          * @method onMouseDown
          */
         onMouseDown: function (e) {
+            if( this.ignoreDraggableElements && e.target.draggable ) {
+                return;
+            } 
+            
             if (this.drag === false || this.options.wait === false) {
                 // ignore mousedown event if emitted on scrollbar
                 this.drag = e.offsetX <= e.target.clientWidth && e.offsetY <= e.target.clientHeight;

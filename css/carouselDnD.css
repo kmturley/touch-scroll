@@ -1,0 +1,38 @@
+/**
+ * Carousel Drag and Drop styling
+ * @class css.Carousel
+ * @example <div class="carousel carouselDnD"></div>
+ **/
+
+
+.carouselDnD ul {
+    overflow: hidden;
+} 
+
+.carouselDnD li {
+    display: inline-block;
+    white-space: normal;
+    vertical-align: top;
+
+    padding: 10px;
+    width: 200px;
+    text-decoration: none;
+} 
+
+.carouselDnD li img {
+    width: 100%;
+    margin: 0 0 5px 0;
+}
+
+.select {
+    border: 5px solid red 
+}
+
+.hover {
+    background-color: #e9e8ec;
+}
+
+.invisible {
+    display: none;
+    opacity: 0;
+}
